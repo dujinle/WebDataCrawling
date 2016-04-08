@@ -59,9 +59,9 @@ class PaserHtml:
 			strs = strs.replace(diem,'');
 		return strs;
 
-ph = PaserHtml();
-doc = ph.get_html_object(
-		'http://www.douguo.com/cookbook/190520.html',
-		None,None
-	);
-ph.paser_html(doc,['table','.step']);
+	def begin(self,url,proxy,agent,labels):
+		try:
+			doc = self.get_html_object(url,proxy,agent);
+			self.paser_html(doc,labels);
+		except Exception as e:
+			raise e;
