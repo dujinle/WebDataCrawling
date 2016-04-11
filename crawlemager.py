@@ -5,6 +5,7 @@ import threading
 import logging
 import sys
 import traceback
+import json
 
 sys.path.append('./crawle_data');
 from proxy import Proxy
@@ -49,7 +50,8 @@ class Crawle(threading.Thread):
 					if len(tt) >= 1:
 						logger.info('task url:' + tt[1]);
 						self.paserhtml.begin(tt[1],None,None,config.labels,config.timeout);
-						print self.paserhtml.data;
+						value = json.dumps(self.paserhtml.data,indent = 4,ensure_ascii=False);
+						print value;
 						#yield todo insert sql
 				except Exception as e:
 					logger.error(format(e));
