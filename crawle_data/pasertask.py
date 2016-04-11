@@ -4,11 +4,14 @@ import bs4
 import re
 from bs4 import BeautifulSoup
 import urllib2
+import sys
+reload(sys);
+sys.setdefaultencoding('utf-8');
 
-class PaserHtml:
+class PaserTask:
 
 	def __init__(self):
-		self.data = dict;
+		self.data = dict();
 
 	def get_html_object(self,url,proxy,agent):
 		try:
@@ -27,41 +30,42 @@ class PaserHtml:
 
 	def paser_html(self,doc,tags):
 		try:
-			self.data.clear();
+			if len(self.data) > 0:
+				self.data.clear();
 			for label in tags:
 				tag = doc.select(label);
-				if label[0] == '\.':
-					tag = doc.find_all(class_ = re.compile(label[1:]));
-				elif label[0] == '\#':
-					tag = doc.find_all(id = re.compile(label[1:]));
 				for tt in tag:
 					self.looptag(tt);
 		except Exception as e:
 			print e;
 
 	def looptag(self,tag):
-		if tag.name == 'img':
-			self.data[tag.attrs['alt']] = tag.attrs['original'];
+		if tag.name == 'a':
+			attrs = tag.attrs;
+			if attrs.has_key('href') and attrs.has_key('title'):
+				self.data[attrs['title']] = attrs['href'];
 		elif type(tag) == bs4.element.Tag:
 			conts = tag.contents;
 			for it in conts:
 				self.looptag(it);
-		elif type(tag) == bs4.element.NavigableString:
-			data = self.delstr(tag,u'\n');
-			data = self.delstr(data,u' ');
-			if len(data) > 0:
-				if not self.data.has_key('strs'):
-					self.data['strs'] = list;
-				self.data.append(data);
 
-	def delstr(self,strs,diem):
-		while strs.find(diem) != -1:
-			strs = strs.replace(diem,'');
-		return strs;
-
-	def begin(self,url,proxy,agent,labels):
+	def begin(self,url,proxy,agent,labels,pfile):
 		try:
 			doc = self.get_html_object(url,proxy,agent);
 			self.paser_html(doc,labels);
+			fp = open(pfile,'w');
+			for key in self.data.keys():
+				fp.write(key + '\t' + self.data[key] + '\n');
+			fp.close();
 		except Exception as e:
 			raise e;
+if __name__ == '__main__':
+	if len(sys.argv) == 1:
+		print 'Usage:%s outfile' %sys.argv[0];
+		sys.exit(-1);
+	pfile = sys.argv[1];
+	pt = PaserTask();
+	pt.begin('http://www.douguo.com/allrecipes',
+		None,None,['a[target="_blank"]'],
+		pfile
+	);

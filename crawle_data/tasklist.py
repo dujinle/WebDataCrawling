@@ -3,7 +3,7 @@
 
 class TaskPool:
 	def __init__(self):
-		self.task = list;
+		self.task = list();
 		self.task_id = 0;
 		self.task_num = 0;
 
@@ -28,4 +28,4 @@ class TaskPool:
 			self.task_id = tnum;
 			return self.task[tid:];
 		self.task_id += n;
-		return self.task[tid,tid + n - 1];
+		return self.task[tid:tid + n - 1];

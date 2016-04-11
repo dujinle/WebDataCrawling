@@ -8,9 +8,9 @@ import urllib2
 class PaserHtml:
 
 	def __init__(self):
-		self.data = dict;
+		self.data = dict();
 
-	def get_html_object(self,url,proxy,agent):
+	def get_html_object(self,url,proxy,agent,timeout):
 		try:
 			#proxy like {'http':'http://127.0.0.1:8080'}
 			proxy_support = urllib2.ProxyHandler(proxy);
@@ -19,7 +19,8 @@ class PaserHtml:
 			request = urllib2.Request(url);
 			#agent like 'Mozilla/5.0 (Windows; U; Windows NT 5.1; it; rv:1.8.1.11) Gecko/20071127 Firefox/2.0.0.11'
 			request.add_header('User-Agent',agent);
-			html = urllib2.urlopen(request).read();
+			urlopen = urllib2.urlopen(request,timeout = timeout);
+			html = urlopen.read();
 			doc = BeautifulSoup(html);
 			return doc;
 		except Exception as e:
@@ -51,17 +52,17 @@ class PaserHtml:
 			data = self.delstr(data,u' ');
 			if len(data) > 0:
 				if not self.data.has_key('strs'):
-					self.data['strs'] = list;
-				self.data.append(data);
+					self.data['strs'] = list();
+				self.data['strs'].append(data);
 
 	def delstr(self,strs,diem):
 		while strs.find(diem) != -1:
 			strs = strs.replace(diem,'');
 		return strs;
 
-	def begin(self,url,proxy,agent,labels):
+	def begin(self,url,proxy,agent,labels,timeout):
 		try:
-			doc = self.get_html_object(url,proxy,agent);
+			doc = self.get_html_object(url,proxy,agent,timeout);
 			self.paser_html(doc,labels);
 		except Exception as e:
 			raise e;
