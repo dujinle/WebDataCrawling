@@ -1,14 +1,21 @@
 #!/usr/bin/python
 #-*- coding:utf-8 -*-
+import sys
+reload(sys);
+sys.setdefaultencoding('utf-8');
+
 import bs4
 import re
 from bs4 import BeautifulSoup
 import urllib2
+import json
+import collections
 
 class PaserHtml:
 
 	def __init__(self):
-		self.data = dict();
+		self.key = None;
+		self.data = collections.OrderedDict();
 
 	def get_html_object(self,url,proxy,agent,timeout):
 		try:
@@ -36,9 +43,36 @@ class PaserHtml:
 				elif label[0] == '\#':
 					tag = doc.find_all(id = re.compile(label[1:]));
 				for tt in tag:
+					if label == 'table':
+						self.paser_table(tt,None);
+						continue;
 					self.looptag(tt);
 		except Exception as e:
 			print e;
+	def paser_table(self,doc,tags):
+		body = doc.tbody;
+		for cont in body.contents:
+			if cont.name == 'tr':
+				tds = cont.contents;
+				for td in tds:
+					self.key = None;
+					self.looptdtag(td,None);
+
+	def looptdtag(self,td,key):
+		if type(td) == bs4.element.Tag:
+			tcont = td.contents;
+			for tchild in tcont:
+				self.looptdtag(tchild,key);
+		elif type(td) == bs4.element.NavigableString:
+			td = self.delstr(td,'\n');
+			td = self.delstr(td,'\t');
+			td = self.delstr(td,' ');
+			if len(td) > 0:
+				if self.key is None:
+					self.key = td;
+					self.data[self.key] = '';
+				else:
+					self.data[self.key] = td;
 
 	def looptag(self,tag):
 		if tag.name == 'img':
@@ -49,7 +83,7 @@ class PaserHtml:
 				self.looptag(it);
 		elif type(tag) == bs4.element.NavigableString:
 			data = self.delstr(tag,u'\n');
-			data = self.delstr(data,u' ');
+			#data = self.delstr(data,u' ');
 			if len(data) > 0:
 				if not self.data.has_key('strs'):
 					self.data['strs'] = list();
@@ -66,3 +100,7 @@ class PaserHtml:
 			self.paser_html(doc,labels);
 		except Exception as e:
 			raise e;
+
+#pth = PaserHtml();
+#pth.begin('http://www.douguo.com/cookbook/1355539.html',None,None,['table','.step','.xtieshi'],10);
+#print json.dumps(pth.data,indent = 2,ensure_ascii = False);
