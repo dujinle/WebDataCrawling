@@ -1,6 +1,5 @@
-#!/usr/bin/python
 #-*- coding:utf-8 -*-
-
+#虚拟代理管理器
 class Proxy:
 	def __init__(self):
 		self.proxys = dict();
@@ -13,10 +12,10 @@ class Proxy:
 				line = fd.readline();
 				if not line:
 					break;
-				if not self.proxys.has_key('total_num'):
+				if not 'total_num' in self.proxys:
 					self.proxys['total_num'] = 0;
 				self.proxys['total_num'] += 1;
-				if not self.proxys.has_key('proxy'):
+				if not 'proxy' in self.proxys:
 					self.proxys['proxy'] = list();
 				self.proxys['proxy'].append(line.strip('\n'));
 			self.proxys['step'] = 0;
@@ -30,10 +29,10 @@ class Proxy:
 				line = fd.readline();
 				if not line:
 					break;
-				if not self.agents.has_key('total_num'):
+				if not 'total_num' in self.agents:
 					self.agents['total_num'] = 0;
 				self.agents['total_num'] += 1;
-				if not self.agents.has_key('agent'):
+				if not 'agent' in self.agents:
 					self.agents['agent'] = list();
 				self.agents['agent'].append(line.strip('\n'));
 			self.agents['step'] = 0;

@@ -1,4 +1,3 @@
-#!/usr/bin/python
 #-*- coding:utf-8 -*-
 
 class TaskPool:
@@ -12,12 +11,11 @@ class TaskPool:
 			fp = open(tfile,'r');
 			while True:
 				line = fp.readline();
-				if not line:
-					break;
+				if not line: break;
 				self.task.append(line.strip('\n'));
 				self.task_num += 1;
-		except Exception as e:
-			raise e;
+		except Exception as e: raise e;
+
 	#return n tasks
 	def get_tasks(self,n):
 		tid = self.task_id;

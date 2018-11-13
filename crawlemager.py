@@ -1,18 +1,9 @@
-#!/usr/bin/python
 #-*- coding : utf-8 -*-
 
-import threading
-import logging
-import sys
-import traceback
-import json
-<<<<<<< HEAD
-=======
-
->>>>>>> db6889815ef9b8b83c1fb1c89a847afe6ee86784
+import threading,logging,sys,traceback,json
 sys.path.append('./crawle_data');
 from proxy import Proxy
-from paserhtml import PaserHtml
+from crawle_download import CrawleDownload
 from tasklist import TaskPool
 import config
 
@@ -31,7 +22,7 @@ class Crawle(threading.Thread):
 		threading.Thread.__init__(self);
 		self.task = task;
 		self.proxy = proxy;
-		self.paserhtml = PaserHtml();
+		self.parse = CrawleDownload(config.base_url);
 		self.hits = 0;
 
 	def run(self):
@@ -51,12 +42,10 @@ class Crawle(threading.Thread):
 				try:
 					tt = tk.split('\t');
 					if len(tt) >= 1:
-						logger.info('task url:' + tt[1]);
-						self.paserhtml.begin(tt[1],None,None,config.labels,config.timeout);
-						value = json.dumps(self.paserhtml.data,indent = 4,ensure_ascii=False);
-						print value;
-						#yield todo insert sql
+						logger.info('task url:' + tt[1] + ' proxy:' + proxy['http']);
+						self.parse.begin(tt[1],None);
 				except Exception as e:
+					print(e)
 					logger.error(format(e));
 			self.hits += 1;
 

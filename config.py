@@ -1,4 +1,3 @@
-#!/usr/bin/python
 #-*- coding :utf-8 -*-
 
 # the proxys file
@@ -15,4 +14,6 @@ pidnum = 10;
 timeout = 2;
 
 # tag to be load
-labels = ['table','.step','.xtieshi'];
+#需要获取的标签内容
+labels = ['img','src','alt'];
+base_url = 'http://www.xiangqiqipu.com'
